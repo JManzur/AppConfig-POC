@@ -1,3 +1,4 @@
+# Values come from provieder.tf
 variable "ProjectTags" {}
 variable "vpcNameTag" {}
 variable "AWSRegion" {}

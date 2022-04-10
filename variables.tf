@@ -15,8 +15,8 @@ variable "aws_profile" {
 variable "ProjectTags" {
   type = map(string)
   default = {
-    service     = "AppConfig",
-    environment = "POC"
+    Service     = "AppConfig POC",
+    Environment = "POC"
     DeployedBy  = "example@mail.com"
   }
 }

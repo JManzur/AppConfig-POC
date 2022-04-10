@@ -3,7 +3,6 @@ modules/ec2/files/__pycache__/
 modules/ecs/fastapi_demo/Pipfile
 modules/ecs/fastapi_demo/Pipfile.lock
 modules/ecs/scripts/image_uri.json
-.terraform.lock.hcl
 
 # Local .terraform directories
 **/.terraform/*

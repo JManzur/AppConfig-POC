@@ -8,6 +8,10 @@ data "aws_ami" "linux2" {
     values = ["amzn2-ami-hvm*"]
   }
 }
+# Calculate hash of code source directory
+data "external" "ec2-files-hash" {
+  program = [coalesce("${path.module}/scripts/hash.sh"), "${path.module}/files"]
+}
 
 # Zip the API files
 data "archive_file" "ec2_init" {
@@ -43,6 +47,9 @@ resource "aws_instance" "poc-ec2" {
 }
 
 resource "null_resource" "copyfiles" {
+  triggers = {
+    hash = data.external.ec2-files-hash.result["hash"]
+  }
 
   connection {
     type        = "ssh"
