@@ -1,8 +1,8 @@
 # Values come from provieder.tf
 variable "ProjectTags" {}
 variable "ec2NameTag" {}
-variable "PublicSubnetID" {}
 variable "VPCID" {}
+variable "PublicSubnet" {}
 
 /* EC2 Instance type */
 #Use: instance_type = var.instance_type["type1"]

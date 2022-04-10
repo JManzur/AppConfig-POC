@@ -9,17 +9,17 @@
 
 #   vars = {
 #     app_image     = "${data.external.get_image_uri.result["URI"]}"
-#     aws_region    = var.aws_region
+#     aws_region    = var.AWSRegion
 #     app_port      = 8082
-#     app_cw_group  = aws_cloudwatch_log_group.fd-log_group.name
-#     app_cw_stream = aws_cloudwatch_log_stream.name
+#     app_cw_group  = "/FastAPI_Logs"
+#     app_cw_stream = "FastAPI_Stream"
 #   }
 # }
 
 # #Task definition
 # resource "aws_ecs_task_definition" "fastapi-demo-td" {
 #   family                   = "fastapi-demo-td"
-#   task_role_arn            = aws_iam_role.ecs_policy_rolearn
+#   task_role_arn            = aws_iam_role.ecs_policy_role.arn
 #   execution_role_arn       = aws_iam_role.ecs_policy_role.arn
 #   network_mode             = "awsvpc"
 #   requires_compatibilities = ["FARGATE"]
@@ -27,7 +27,7 @@
 #   memory                   = 2048
 #   container_definitions    = data.template_file.fastapi-demo-tpl.rendered
 
-#   tags = merge(var.project-tags, { Name = "${var.resource-name-tag}-task-definition" }, )
+#   tags = merge(var.ProjectTags, { Name = "${var.ecsNameTag}-task-definition" }, )
 # }
 
 # #Service definition
@@ -39,18 +39,18 @@
 #   launch_type            = "FARGATE"
 #   enable_execute_command = true
 
-#   tags = merge(var.project-tags, { Name = "${var.resource-name-tag}-fastapi-srv" }, )
+#   tags = merge(var.ProjectTags, { Name = "${var.ecsNameTag}-fastapi-srv" }, )
 
 #   network_configuration {
 #     security_groups  = [aws_security_group.ecs_tasks.id]
-#     subnets          = [aws_subnet.poc_private.id]
+#     subnets          = [var.PrivateSubnetID]
 #     assign_public_ip = false
 #   }
 
 #   load_balancer {
 #     target_group_arn = aws_alb_target_group.fastapi-demo-tg.id
 #     container_name   = "fastapi-demo"
-#     container_port   = var.app_port
+#     container_port   = 8082
 #   }
 
 #   depends_on = [aws_alb_listener.fastapi-demo-front_end]

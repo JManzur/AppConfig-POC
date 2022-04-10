@@ -1,29 +1,44 @@
+data "aws_availability_zones" "available" {
+  state = "available"
+}
+
 # VPC Definition
 resource "aws_vpc" "poc_vpc" {
-  cidr_block           = "10.48.0.0/16"
+  cidr_block           = var.vpcCidr
   instance_tenancy     = "default"
-  enable_dns_support   = "true"
-  enable_dns_hostnames = "true"
+  enable_dns_support   = true
+  enable_dns_hostnames = true
 
   tags = merge(var.ProjectTags, { Name = "${var.vpcNameTag}" }, )
 }
 
-# Public Subnet
-resource "aws_subnet" "poc_public" {
-  vpc_id            = aws_vpc.poc_vpc.id
-  cidr_block        = "10.48.10.0/24"
-  availability_zone = "${var.AWSRegion}a"
-
-  tags = merge(var.ProjectTags, { Name = "${var.vpcNameTag}-public" }, )
+# VPC Flow Logs
+resource "aws_flow_log" "VpcFlowLog" {
+  iam_role_arn    = aws_iam_role.vpc_fl_policy_role.arn
+  log_destination = aws_cloudwatch_log_group.vpc_log_group.arn
+  traffic_type    = "ALL"
+  vpc_id          = aws_vpc.poc_vpc.id
 }
 
-# Private Subnet
-resource "aws_subnet" "poc_private" {
-  vpc_id            = aws_vpc.poc_vpc.id
-  cidr_block        = "10.48.20.0/24"
-  availability_zone = "${var.AWSRegion}a"
+# Public Subnets
+resource "aws_subnet" "poc_public" {
+  for_each                = { for i, v in var.PublicSubnet-List : i => v }
+  vpc_id                  = aws_vpc.poc_vpc.id
+  cidr_block              = cidrsubnet(var.vpcCidr, each.value.newbits, each.value.netnum)
+  availability_zone       = data.aws_availability_zones.available.names[each.value.az]
+  map_public_ip_on_launch = true
 
-  tags = merge(var.ProjectTags, { Name = "${var.vpcNameTag}-private" }, )
+  tags = merge(var.ProjectTags, { Name = "${var.vpcNameTag}-${each.value.name}" }, )
+}
+
+# Public Subnets
+resource "aws_subnet" "poc_private" {
+  for_each          = { for i, v in var.PrivateSubnet-List : i => v }
+  vpc_id            = aws_vpc.poc_vpc.id
+  cidr_block        = cidrsubnet(var.vpcCidr, each.value.newbits, each.value.netnum)
+  availability_zone = data.aws_availability_zones.available.names[each.value.az]
+
+  tags = merge(var.ProjectTags, { Name = "${var.vpcNameTag}-${each.value.name}" }, )
 }
 
 # Internet Gateway
@@ -33,51 +48,47 @@ resource "aws_internet_gateway" "gw" {
   tags = merge(var.ProjectTags, { Name = "${var.vpcNameTag}-gw" }, )
 }
 
-# EIP for NAT Gateway
-resource "aws_eip" "nat_gateway" {
-  vpc = true
-}
-
-# NAT Gateway
-resource "aws_nat_gateway" "nat_gateway" {
-  allocation_id = aws_eip.nat_gateway.id
-  subnet_id     = aws_subnet.poc_public.id
-
-  tags = merge(var.ProjectTags, { Name = "${var.vpcNameTag}-ngw" }, )
-}
-
-# Public Route Table
-resource "aws_route_table" "public_route_table" {
-  vpc_id = aws_vpc.poc_vpc.id
-
+# Default Route Table
+resource "aws_default_route_table" "publicRouteTable" {
+  default_route_table_id = aws_vpc.poc_vpc.default_route_table_id
   route {
     cidr_block = "0.0.0.0/0"
     gateway_id = aws_internet_gateway.gw.id
   }
+  tags = merge(var.ProjectTags, { Name = "${var.vpcNameTag}-default-rt" }, )
+}
 
-  tags = merge(var.ProjectTags, { Name = "${var.vpcNameTag}-rt" }, )
+# EIP for NAT Gateway
+resource "aws_eip" "nat_gateway" {
+  count = var.natCount
+  vpc   = true
+}
+
+# NAT Gateway
+resource "aws_nat_gateway" "nat_gateway" {
+  count         = var.natCount
+  allocation_id = aws_eip.nat_gateway[count.index].id
+  subnet_id     = aws_subnet.poc_public[count.index].id
+
+  tags = merge(var.ProjectTags, { Name = "${var.vpcNameTag}-ngw" }, )
 }
 
 # Private Route Table
 resource "aws_route_table" "private_route_table" {
+  count  = var.natCount
   vpc_id = aws_vpc.poc_vpc.id
 
   route {
     cidr_block     = "0.0.0.0/0"
-    nat_gateway_id = aws_nat_gateway.nat_gateway.id
+    nat_gateway_id = aws_nat_gateway.nat_gateway[count.index].id
   }
 
   tags = merge(var.ProjectTags, { Name = "${var.vpcNameTag}-rt" }, )
 }
 
-# Public Subnets Association
-resource "aws_route_table_association" "public_1" {
-  subnet_id      = aws_subnet.poc_public.id
-  route_table_id = aws_route_table.public_route_table.id
-}
-
 # Private Subnets Association
-resource "aws_route_table_association" "private_1" {
-  subnet_id      = aws_subnet.poc_private.id
-  route_table_id = aws_route_table.private_route_table.id
+resource "aws_route_table_association" "private" {
+  count          = length(var.PrivateSubnet-List)
+  subnet_id      = aws_subnet.poc_private[count.index].id
+  route_table_id = aws_route_table.private_route_table[count.index].id
 }

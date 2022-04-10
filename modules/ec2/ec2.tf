@@ -26,7 +26,7 @@ resource "aws_iam_instance_profile" "ec2_profile" {
 resource "aws_instance" "poc-ec2" {
   ami                         = data.aws_ami.linux2.id
   instance_type               = var.instance_type["type1"]
-  subnet_id                   = var.PublicSubnetID
+  subnet_id                   = var.PublicSubnet[0]
   key_name                    = var.key_name
   iam_instance_profile        = aws_iam_instance_profile.ec2_profile.name
   vpc_security_group_ids      = [aws_security_group.poc_server.id]

@@ -23,23 +23,28 @@ module "appconfig" {
 
 # Create an API running on an EC2 instance
 module "ec2" {
-  source         = "./modules/ec2"
-  ProjectTags    = var.ProjectTags
-  ec2NameTag     = var.ec2NameTag
-  PublicSubnetID = module.vpc.public_subnet
-  VPCID          = module.vpc.vpc_id
+  source       = "./modules/ec2"
+  ProjectTags  = var.ProjectTags
+  ec2NameTag   = var.ec2NameTag
+  VPCID        = module.vpc.vpc_id
+  PublicSubnet = module.vpc.public_subnet
 
   depends_on = [
     module.appconfig.aws_appconfig_application,
   ]
 }
 
-# # Create an API running on an ECS Cluster
-# module "ecs" {
-#   source      = "./modules/ecs"
-#   ProjectTags = var.ProjectTags
-#   ecsNameTag  = var.ecsNameTag
-# }
+# Create an API running on an ECS Cluster
+module "ecs" {
+  source        = "./modules/ecs"
+  ProjectTags   = var.ProjectTags
+  ecsNameTag    = var.ecsNameTag
+  AWSRegion     = var.aws_region
+  AWSProfile    = var.aws_profile
+  VPCID         = module.vpc.vpc_id
+  PublicSubnet  = module.vpc.public_subnet
+  PrivateSubnet = module.vpc.private_subnet
+}
 
 # Create an API running on an Lambda Function
 module "lambda" {

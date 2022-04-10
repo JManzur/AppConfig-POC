@@ -22,7 +22,23 @@
     - Private Route Table
     - Public Subnets Association
     - Private Subnets Association
-
+- Lambda Module:
+    - Python Lambda Function
+    - IAM Role
+    - API Gateway 
+- EC2 Module:
+    - Public Linux Instance running a Python API.
+    - IAM Role to allow instance to get AppConfig Configuration.
+    - Security group with whitelisted User IP (obtained automatically)
+- ECS Module:
+    - ECR
+    - ECS Cluster
+    - ECS Task (Python API)
+    - IAM Role to allow container to get AppConfig Configuration.
+    - ALB
+    - Security Groups
+    - CloudWatch Log Group
+    - CloudWatch Log Stream
 
 
 

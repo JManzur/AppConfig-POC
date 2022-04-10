@@ -1,7 +1,3 @@
-# data "external" "get_image_uri" {
-#   program = [coalesce("${path.module}/scripts/get_image_uri.sh")]
-# }
-
-# output "fastapi_image_uri" {
-#   value = data.external.get_image_uri.result["URI"]
+# output "fastapi-alb-dns" {
+#   value = "http://${aws_alb.fastapi-demo-alb.dns_name}:8082"
 # }
