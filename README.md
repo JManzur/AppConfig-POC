@@ -49,7 +49,7 @@ This terraforming implementation is intended to be used as a proof of concept on
 
 ![App Screenshot](images/AppConfig-POC.drawio.png)
 
->:arrow_right: For simplicity reasons, not all the resources are represented in the diagram.
+>:arrow_right: For simplicity reasons, not all the resources are represented in the diagram :arrow_left:
 
 ## Tested with: 
 
