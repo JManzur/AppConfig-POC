@@ -1,6 +1,20 @@
 # ECS IAM Policy Document
 data "aws_iam_policy_document" "ecs_policy_source" {
   statement {
+    sid    = "TaskExecution"
+    effect = "Allow"
+    actions = [
+      "ecr:GetAuthorizationToken",
+      "ecr:BatchCheckLayerAvailability",
+      "ecr:GetDownloadUrlForLayer",
+      "ecr:BatchGetImage",
+      "logs:CreateLogStream",
+      "logs:PutLogEvents"
+    ]
+    resources = ["*"]
+  }
+
+  statement {
     sid    = "SSMAccess"
     effect = "Allow"
     actions = [

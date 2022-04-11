@@ -38,7 +38,7 @@ resource "aws_iam_policy" "vpc_fl_policy" {
 
 # VPC Flow Logs IAM Role (vpc_fl_ Task Execution role)
 resource "aws_iam_role" "vpc_fl_policy_role" {
-  name               = "vpc_fl__appconfig_policy_role"
+  name               = "vpc_fl_appconfig_policy_role"
   assume_role_policy = data.aws_iam_policy_document.vpc_fl_role_source.json
   tags               = merge(var.ProjectTags, { Name = "${var.vpcNameTag}-VPCFlowLogs-Role" }, )
 }

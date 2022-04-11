@@ -1,5 +1,6 @@
 #!/bin/bash
 # Create a EC2 SSH Key Pair using AWS CLI
+# Ref.: https://docs.aws.amazon.com/cli/latest/reference/ec2/create-key-pair.html
 
 #Variables:
 KEY_NAME=AppConfig_POC

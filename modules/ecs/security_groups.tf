@@ -8,8 +8,8 @@ resource "aws_security_group" "fastapi-demo-sg" {
 
   ingress {
     protocol    = "tcp"
-    from_port   = 8082
-    to_port     = 8082
+    from_port   = var.app_port
+    to_port     = var.app_port
     cidr_blocks = ["0.0.0.0/0"]
     description = "Internet to ALB"
   }
@@ -32,8 +32,8 @@ resource "aws_security_group" "ecs_tasks" {
 
   ingress {
     protocol        = "tcp"
-    from_port       = 8082
-    to_port         = 8082
+    from_port       = var.app_port
+    to_port         = var.app_port
     security_groups = [aws_security_group.fastapi-demo-sg.id]
     description     = "FastApi ALB to ECS"
   }

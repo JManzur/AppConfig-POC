@@ -15,8 +15,8 @@ output "api-gw_invoke_url" {
   description = "URL to access the API running on Lambda"
 }
 
-# # Print ECS Module Output
-# output "fastapi-alb-dns" {
-#   value       = module.ecs.fastapi-alb-dns
-#   description = "URL to access the API running on ECS"
-# }
+# Print ECS Module Output
+output "fastapi-alb-dns" {
+  value       = module.ecs.fastapi-alb-dns
+  description = "URL to access the API running on ECS"
+}

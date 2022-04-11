@@ -1,45 +1,53 @@
-# #Application Load Balancer (ALB): Internet > fastapi-Demo ECS
-# resource "aws_lb" "fastapi-demo-alb" {
-#   name               = "fastapi-demo-alb"
-#   internal           = false
-#   load_balancer_type = "application"
-#   security_groups    = [aws_security_group.fastapi-demo-sg.id]
-#   subnets            = [var.PublicSubnetID]
+#Application Load Balancer (ALB): Internet > fastapi-Demo ECS
+resource "aws_lb" "fastapi-demo-alb" {
+  name               = "fastapi-demo-alb"
+  internal           = false
+  load_balancer_type = "application"
+  security_groups    = [aws_security_group.fastapi-demo-sg.id]
+  subnets            = [var.PublicSubnet[0], var.PublicSubnet[1]]
 
-#   tags = merge(var.ProjectTags, { Name = "${var.ecsNameTag}-alb" }, )
-# }
+  #   enable_deletion_protection = true
 
-# #ALB Target
-# resource "aws_lb_target_group" "fastapi-demo-tg" {
-#   name        = "fastapi-demo-tg"
-#   port        = 8082
-#   protocol    = "HTTP"
-#   vpc_id      = var.VPCID
-#   target_type = "ip"
+  #   access_logs {
+  #     bucket  = aws_s3_bucket.lb_logs.bucket
+  #     prefix  = "test-lb"
+  #     enabled = true
+  #   }
 
-#   tags = merge(var.ProjectTags, { Name = "${var.ecsNameTag}-tg" }, )
+  tags = merge(var.ProjectTags, { Name = "${var.ecsNameTag}-alb" }, )
+}
 
-#   health_check {
-#     healthy_threshold   = "3"
-#     interval            = "30"
-#     protocol            = "HTTP"
-#     matcher             = "200"
-#     timeout             = "3"
-#     path                = "/status"
-#     unhealthy_threshold = "2"
-#   }
-# }
+#ALB Target
+resource "aws_lb_target_group" "fastapi-demo-tg" {
+  name        = "fastapi-demo-tg"
+  port        = var.app_port
+  protocol    = "HTTP"
+  vpc_id      = var.VPCID
+  target_type = "ip"
 
-# #ALB Listener
-# resource "aws_lb_listener" "fastapi-demo-front_end" {
-#   load_balancer_arn = aws_lb.fastapi-demo-alb.id
-#   port              = 8082
-#   protocol          = "HTTP"
+  tags = merge(var.ProjectTags, { Name = "${var.ecsNameTag}-tg" }, )
 
-#   tags = merge(var.ProjectTags, { Name = "${var.ecsNameTag}-listener" }, )
+  health_check {
+    healthy_threshold   = "3"
+    interval            = "30"
+    protocol            = "HTTP"
+    matcher             = "200"
+    timeout             = "3"
+    path                = var.health_check_path
+    unhealthy_threshold = "2"
+  }
+}
 
-#   default_action {
-#     target_group_arn = aws_lb_target_group.fastapi-demo-tg.id
-#     type             = "forward"
-#   }
-# }
+#ALB Listener
+resource "aws_lb_listener" "fastapi-demo-front_end" {
+  load_balancer_arn = aws_lb.fastapi-demo-alb.id
+  port              = var.app_port
+  protocol          = "HTTP"
+
+  tags = merge(var.ProjectTags, { Name = "${var.ecsNameTag}-listener" }, )
+
+  default_action {
+    target_group_arn = aws_lb_target_group.fastapi-demo-tg.id
+    type             = "forward"
+  }
+}

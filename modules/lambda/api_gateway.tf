@@ -93,14 +93,14 @@ resource "aws_api_gateway_integration_response" "get_integration_response" {
 }
 
 # ---------------------------------------------------
-# Stages, API-Key and Usage Plan
+# Stages, and Usage Plan
 # ---------------------------------------------------
 
 # Stage PROD definition:
-resource "aws_api_gateway_stage" "v1" {
+resource "aws_api_gateway_stage" "api_stage" {
   deployment_id = aws_api_gateway_deployment.appconfig_poc_api.id
   rest_api_id   = aws_api_gateway_rest_api.appconfig_poc_api_gw.id
-  stage_name    = "v1"
+  stage_name    = var.api_stage_name
 }
 
 # Usage plan definition:
@@ -110,7 +110,7 @@ resource "aws_api_gateway_usage_plan" "appconfig_pi_usage_plan" {
 
   api_stages {
     api_id = aws_api_gateway_rest_api.appconfig_poc_api_gw.id
-    stage  = aws_api_gateway_stage.v1.stage_name
+    stage  = aws_api_gateway_stage.api_stage.stage_name
   }
 }
 

@@ -1,4 +1,4 @@
-# Previous execution of "aws configure" is needed
+# AWS provider version definition
 terraform {
   required_providers {
     aws = {
@@ -29,9 +29,7 @@ module "ec2" {
   VPCID        = module.vpc.vpc_id
   PublicSubnet = module.vpc.public_subnet
 
-  depends_on = [
-    module.appconfig.aws_appconfig_application,
-  ]
+  depends_on = [module.appconfig.aws_appconfig_application]
 }
 
 # Create an API running on an ECS Cluster
@@ -44,6 +42,8 @@ module "ecs" {
   VPCID         = module.vpc.vpc_id
   PublicSubnet  = module.vpc.public_subnet
   PrivateSubnet = module.vpc.private_subnet
+
+  depends_on = [module.appconfig.aws_appconfig_application]
 }
 
 # Create an API running on an Lambda Function
@@ -52,6 +52,8 @@ module "lambda" {
   ProjectTags   = var.ProjectTags
   lambdaNameTag = var.lambdaNameTag
   AWSRegion     = var.aws_region
+
+  depends_on = [module.appconfig.aws_appconfig_application]
 }
 
 # Create a VPC
