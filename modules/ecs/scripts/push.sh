@@ -28,5 +28,5 @@ docker tag $IMAGE_NAME $ECR_URL:$IMAGE_TAG
 # Push the Docker Image:
 docker push $ECR_URL:$IMAGE_TAG
 
-# # Output Image URI to a json file to be use by get_image_uri.sh:
-# echo '{ "Image_URI": "'$ECR_URL:$IMAGE_TAG'" }' > ../scripts/image_uri.json
+# Output Image URI to a json file to be use by get_image_uri.sh:
+echo '{ "Image_URI": "'$ECR_URL:$IMAGE_TAG'" }' > ../scripts/image_uri.json

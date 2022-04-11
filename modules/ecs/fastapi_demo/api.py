@@ -44,19 +44,19 @@ async def root():
             'Name': 'Satisfaction - Rolling Stones'
         },
         {
-            'Name': 'Friends'
+            'Name': 'Come As You Are - Nirvana'
         },
         {
-            'Name': 'The Big Bang Theory'
+            'Name': 'Boulevard of Broken Dreams - Green Day'
         },
         {
-            'Name': 'The Simpsons'
+            'Name': 'Sweet Child O Mine - Guns N Roses'
         },
         {
-            'Name': 'Frasier'
+            'Name': 'One - Metallica'
         },
         {
-            'Name': 'Community'
+            'Name': 'Back In Black - AC/DC'
         }
     ]
     
