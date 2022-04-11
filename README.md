@@ -1,6 +1,8 @@
 
 # Full AppConfig Demo using EC2, Lambda and ECS.
 
+This terraforming implementation is intended to be used as a proof of concept on how to harness the power of AWS AppConfig. In this POC, an AppConfig configuration profile is implemented and 3 APIs running on different systems (EC2, ECS and Lambda) get configuration from it.
+
 ## Resources deployed by this manifest:
 
 - AppConfig Module:
@@ -45,7 +47,9 @@
 
 ### Deployment diagram:
 
-![App Screenshot](images/placeholder.png)
+![App Screenshot](images/AppConfig-POC.drawio.png)
+
+> :exclamation: :exclamation: For simplicity reasons, not all the resources are represented in the diagram.
 
 ## Tested with: 
 
@@ -62,6 +66,7 @@ Located in the root directory, make an "aws configure" to log into the aws accou
 aws configure
 terraform init
 ```
+
 ```bash
 # Find all files with the keyword 'CTesting' and replace them with 'default'.
 find $(pwd) -type f -exec sed -i 's/CTesting/defualt/gI' {} \;
@@ -80,7 +85,6 @@ Located in the root directory, make the necessary changes in the variables.tf fi
 ```bash
 terraform apply
 ```
-## Deployment How-To:
 
 ## Debugging / Troubleshooting:
 
@@ -122,4 +126,5 @@ bash modules/vpc/scripts/delete_log_group.sh
 
 ## Documentation:
 
-- [EXAMPLE](URL)
+- [AWS AppConfig Helper - Documentation](https://github.com/aws-samples/sample-python-helper-aws-appconfig)
+- [Boto3 AppConfig - Documentation](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/appconfig.html)
