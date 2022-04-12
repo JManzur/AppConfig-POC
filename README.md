@@ -78,6 +78,12 @@ find $(pwd) -iregex '.*\.\(tf\|sh\|Dockerfile\|py\)$' -exec grep -li 'us-east-1'
 find $(pwd) -iregex '.*\.\(tf\|sh\|Dockerfile\|py\)$' -exec sed -i 's/REGION-X/REGION-Y/gI'
 ```
 
+Create a SSH Key:
+
+```bash
+bash scripts/create_ssh_key.sh
+```
+
 ## Deployment How-To:
 
 Located in the root directory, make the necessary changes in the variables.tf file and run the manifests:

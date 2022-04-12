@@ -1,6 +1,5 @@
 # Get Docker Image URI using a local scritp
 data "external" "get_image_uri" {
-  #program = [coalesce("scripts/get_image_uri.sh"), "${var.AWSRegion}", "${var.AWSProfile}", "${aws_ecr_repository.demo-repo.repository_url}", "${aws_ecr_repository.demo-repo.name}"]
   program = [coalesce("${path.module}/scripts/get_image_uri.sh")]
 
   depends_on = [
